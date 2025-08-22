@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Query
+from typing import Optional, List
 from sqlalchemy.orm import Session
 from app.schema import PropertyCreate, PropertyOut
 from app.crud.property import create_property, list_properties, delete_property_by_id
@@ -14,18 +15,31 @@ def create_property_endpoint(payload: PropertyCreate, db: Session = Depends(get_
         raise HTTPException(status_code=409, detail=str(e))
 
 
-@router.get("/list", response_model=list[PropertyOut])
-def list_properties_all_endpoint(db: Session = Depends(get_db)):
-    return list_properties(db)
 
+@router.get("/list", response_model=List[PropertyOut])
+def list_properties_endpoint(
+    address_neighborhood: Optional[str] = Query(None, description="Filtro por Estado"),
+    address_city: Optional[str] = Query(None, description="Filtro por cidade"),
+    address_state: Optional[str] = Query(None, description="Filtro por estado"),
+    capacity: Optional[int] = Query(None, ge=0, description="Capacidade maxima de pessoas"),
+    price_per_night: Optional[int] = Query(None, ge=0, description="Valor maximo"),
+    db: Session = Depends(get_db),
+):
+    return list_properties(
+        db, 
+        address_neighborhood=address_neighborhood, 
+        address_city=address_city,
+        address_state=address_state, 
+        capacity=capacity,
+        price_per_night=price_per_night
+        )
 
 @router.delete("/{property_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_property_endpoint(property_id: int, db: Session = Depends(get_db)):
     try:
         ok = delete_property_by_id(db, property_id)
     except ValueError as e:
-        # se seu CRUD levantar ValueError (ex.: FK impede deleção)
         raise HTTPException(status_code=409, detail=str(e))
     if not ok:
         raise HTTPException(status_code=404, detail="Property not found")
-    return  # 204 No Content
+    return

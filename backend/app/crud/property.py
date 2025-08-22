@@ -1,5 +1,8 @@
+from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import asc, func
+
 from app.models import Property
 from app.schema import PropertyCreate
 
@@ -15,8 +18,36 @@ def create_property(db: Session, data: PropertyCreate) -> Property:
     return obj
 
 
-def list_properties(db: Session) -> list[Property]:
-    return db.query(Property).order_by(Property.id.asc()).all()
+def list_properties(
+    db: Session,
+    location: Optional[str] = None,
+    capacity: Optional[int] = None,
+    address_neighborhood: Optional[str] = None,
+    address_city: Optional[str] = None,
+    address_state: Optional[str] = None,
+    price_per_night: Optional[int] = None 
+) -> List[Property]:
+
+    q = db.query(Property)
+
+    if address_state: 
+        q = q.filter(func.lower(Property.address_state).like(f"%{address_state.lower()}%"))
+    
+    if address_neighborhood:
+        q = q.filter(func.lower(Property.address_neighborhood).like(f"%{address_neighborhood.lower()}%"))
+
+    if address_city:
+        q = q.filter(func.lower(Property.address_city).like(f"%{address_city.lower()}%"))
+
+#esta maior ou igual para facilitar debug mudar para enviar
+
+    if capacity:
+        q = q.filter(Property.capacity >= capacity)
+
+    if price_per_night:
+        q = q.filter(Property.price_per_night <= price_per_night)
+
+    return q.order_by(asc(Property.id)).all()
 
 
 def delete_property_by_id(db: Session, prop_id: int) -> bool:
