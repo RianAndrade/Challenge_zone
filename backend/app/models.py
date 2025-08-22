@@ -1,17 +1,13 @@
-from sqlalchemy import String, Integer, Float, Date, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
-from app.db import Base
+from sqlalchemy import String, Integer, Float, Date, ForeignKey, Numeric
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.base import Base
 
 
 class Property(Base):
     __tablename__ = "properties"
 
-    user_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"),
-        nullable=True,
-        index=True,
-    )
-    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+
     title: Mapped[str] = mapped_column(String(255), nullable=False)
 
     address_street: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -23,19 +19,28 @@ class Property(Base):
 
     rooms: Mapped[int] = mapped_column(Integer, nullable=False)
     capacity: Mapped[int] = mapped_column(Integer, nullable=False)
-    price_per_night: Mapped[float] = mapped_column(Float, nullable=False)
+    price_per_night: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+
+    reservations: Mapped[list["Reservation"]] = relationship(
+    back_populates="property",
+    cascade="all, delete-orphan",
+    )
+
 
 class Reservation(Base):
     __tablename__ = "reservations"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
 
-    property_id: Mapped[int] = mapped_column( ForeignKey(users.id, ), nullable=False)
+    #property_id: Mapped[int] = mapped_column( ForeignKey(properties.id, ), nullable=False)
     client_name: Mapped[str] = mapped_column(String(255), nullable=False)
     client_email: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
-    start_date: Mapped[date] = mapped_column(Date, nullable=False)
-    end_date: Mapped[date] = mapped_column(Date, nullable=False)
+    start_date: Mapped[Date] = mapped_column(Date, nullable=False)
+    end_date: Mapped[Date] = mapped_column(Date, nullable=False)
     guests_quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    property: Mapped["Property"] = relationship(back_populates="reservations")
+
 
 '''
     verificar depois, esta dando algum erro semantico
