@@ -1,6 +1,6 @@
 from sqlalchemy import String, Integer, Float, Date, ForeignKey, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.base import Base
+from app.db.base import Base
 
 
 class Property(Base):

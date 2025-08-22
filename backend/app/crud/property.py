@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import asc, func
 
-from app.models import Property
-from app.schema import PropertyCreate
+from app.db.models import Property
+from app.db.schema import PropertyCreate
 
 def create_property(db: Session, data: PropertyCreate) -> Property:
     obj = Property(**data.model_dump())

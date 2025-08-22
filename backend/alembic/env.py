@@ -10,8 +10,8 @@ BASE_DIR = pathlib.Path(__file__).resolve().parents[1]
 if str(BASE_DIR) not in sys.path:
     sys.path.append(str(BASE_DIR))
 
-from app.base import Base
-import app.models 
+from app.bd.base import Base
+import app.bd.models 
 
 config = context.config
 

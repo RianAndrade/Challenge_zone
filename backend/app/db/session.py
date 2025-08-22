@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.base import Base  # seu declarative_base
+from app.db.base import Base  # seu declarative_base
 
 SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://user:password@db:5432/appdb"
 

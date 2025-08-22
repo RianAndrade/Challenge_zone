@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, status, HTTPException, Query
 from typing import Optional, List
 from sqlalchemy.orm import Session
-from app.schema import PropertyCreate, PropertyOut
+from app.db.schema import PropertyCreate, PropertyOut
 from app.crud.property import create_property, list_properties, delete_property_by_id
-from app.session import get_db
+from app.db.session import get_db
 
 router = APIRouter(prefix="/properties", tags=["properties"])
 
