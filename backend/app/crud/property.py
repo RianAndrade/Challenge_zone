@@ -17,3 +17,17 @@ def create_property(db: Session, data: PropertyCreate) -> Property:
 
 def list_properties(db: Session) -> list[Property]:
     return db.query(Property).order_by(Property.id.asc()).all()
+
+
+def delete_property_by_id(db: Session, prop_id: int) -> bool:
+    obj = db.get(Property, prop_id)
+    if not obj:
+        return False
+    db.delete(obj)
+    try:
+        db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        # se houver restrições de FK sem CASCADE
+        raise ValueError("Cannot delete property due to related records.") from e
+    return True
