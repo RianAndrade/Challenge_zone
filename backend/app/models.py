@@ -21,10 +21,6 @@ class Property(Base):
     capacity: Mapped[int] = mapped_column(Integer, nullable=False)
     price_per_night: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
 
-    reservations: Mapped[list["Reservation"]] = relationship(
-    back_populates="property",
-    cascade="all, delete-orphan",
-    )
 
 
 class Reservation(Base):
@@ -38,9 +34,6 @@ class Reservation(Base):
     start_date: Mapped[Date] = mapped_column(Date, nullable=False)
     end_date: Mapped[Date] = mapped_column(Date, nullable=False)
     guests_quantity: Mapped[int] = mapped_column(Integer, nullable=False)
-
-    property: Mapped["Property"] = relationship(back_populates="reservations")
-
 
 '''
     verificar depois, esta dando algum erro semantico
