@@ -4,4 +4,4 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {"message": "Hello, FastAPI is running in Docker!"}
+    return {"message": "Hello, rias"}
