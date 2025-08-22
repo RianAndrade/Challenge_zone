@@ -13,3 +13,7 @@ def create_property(db: Session, data: PropertyCreate) -> Property:
         raise ValueError("Já existe uma propriedade cadastrada nesse endereço.") from e
     db.refresh(obj)
     return obj
+
+
+def list_properties(db: Session) -> list[Property]:
+    return db.query(Property).order_by(Property.id.asc()).all()
