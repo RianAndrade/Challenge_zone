@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Query 
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from app.db.session import get_db
@@ -11,10 +11,11 @@ router = APIRouter(prefix="/reservations", tags=["reservations"])
 @router.get("", response_model=List[ReservationOut])
 def list_reservations_endpoint(
     db: Session = Depends(get_db),
+    client_email: str = Query(None, description="Email do cliente"),
+    property_id: int = Query(None, description="Id da propiedade")
 ):
-    return list_reservations(
-        db, 
-        )
+    return list_reservations(db, client_email, property_id)
+
 
 @router.post("", response_model=ReservationCreateResponse, status_code=status.HTTP_201_CREATED)
 def create_reservation_endpoint(

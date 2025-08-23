@@ -10,7 +10,7 @@ def _get_property_price(db: Session, property_id: int) -> int:
     stmt = select(Property.price_per_night).where(Property.id == property_id)
     result = db.execute(stmt).scalar_one_or_none()
     if result is None:
-        raise ValueError("Price Property: Propriedade não encontrada")
+        raise ValueError("Propriedade não encontrada")
     return int(result)
 
 def calculate_days_reserved(start_date: date, end_date: date) -> int:
@@ -19,8 +19,6 @@ def calculate_days_reserved(start_date: date, end_date: date) -> int:
         raise ValueError("A data final deve ser maior que a data inicial")
     delta = end_date - start_date
     return delta.days
-
-
 
 
 def create_reservation(db: Session, data: ReservationCreate) -> Reservation:
@@ -45,9 +43,17 @@ def create_reservation(db: Session, data: ReservationCreate) -> Reservation:
 
 
 def list_reservations(
-    db: Session, 
+    db: Session,
+    client_email: Optional[str] = None,
+    property_id: Optional[int] = None, 
 ) -> List[Reservation]:
 
     q = db.query(Reservation)
+
+    if client_email: 
+        q = q.filter(func.lower(Reservation.client_email).like(f"%{client_email.lower()}%"))
+    
+    if property_id: 
+        q = q.filter(Reservation.property_id == property_id) 
     
     return q.order_by(asc(Reservation.id)).all()

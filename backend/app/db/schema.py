@@ -33,7 +33,7 @@ class ReservationCreate(BaseModel):
     client_email: str = Field(..., min_length=1, max_length=255)
     start_date: date
     end_date: date
-    guests_quantity: conint(ge=1) 
+    guests_quantity: conint(ge=0) 
 
     # end_date > start_date
 
