@@ -7,11 +7,6 @@ app = FastAPI(title="Challenge Zone")
 app.include_router(properties_router)
 app.include_router(reservations_router) 
 
-
-@app.get("/health")
-def health():
-    return {"status": "ok"}
-
 @app.get("/")
 def read_root():
-    return {"message": "Hello, rias"}
+    return {"message": "Para acessar o Swagger: http://127.0.0.1:8000/docs#/"}

@@ -1,21 +1,11 @@
+from fastapi import HTTPException, status
 from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import asc, func
-
-from app.db.models import Property
+from sqlalchemy import asc, func, select
+from datetime import date
+from app.db.models import Property, Reservation
 from app.db.schema import PropertyCreate
-
-def create_property(db: Session, data: PropertyCreate) -> Property:
-    obj = Property(**data.model_dump())
-    db.add(obj)
-    try:
-        db.commit()
-    except IntegrityError as e:
-        db.rollback()
-        raise ValueError("Já existe uma propriedade cadastrada nesse endereço.") from e
-    db.refresh(obj)
-    return obj
 
 
 def list_properties(
@@ -49,6 +39,66 @@ def list_properties(
 
     return q.order_by(asc(Property.id)).all()
 
+def _find_conflicts(
+    db: Session,
+    property_id: int,
+    start_date: date,
+    end_date: date,
+) -> List[int]:
+
+    stmt = (
+        select(Reservation.id)
+        .where(
+            Reservation.property_id == property_id,
+            Reservation.start_date <= end_date,
+            Reservation.end_date >= start_date,
+        )
+    )
+    return [row[0] for row in db.execute(stmt).all()]
+
+def check_availability(
+    db: Session,
+    property_id: int,
+    start_date: date,
+    end_date: date,
+    guests_quantity: int,
+) -> List[Property]:
+    
+    prop = db.get(Property, property_id)
+    
+    if prop is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Propriedade não encontrada",
+        )
+
+    if guests_quantity > prop.capacity:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Capacidade insuficiente para a quantidade de hóspedes solicitada",
+        )
+
+    if _find_conflicts(db, property_id, start_date, end_date):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Período indisponível para esta propriedade",
+        )
+    
+    return [prop]
+
+
+
+def create_property(db: Session, data: PropertyCreate) -> Property:
+    obj = Property(**data.model_dump())
+    db.add(obj)
+    try:
+        db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        raise ValueError("Já existe uma propriedade cadastrada nesse endereço.") from e
+    db.refresh(obj)
+    return obj
+
 
 def delete_property_by_id(db: Session, prop_id: int) -> bool:
     obj = db.get(Property, prop_id)
@@ -59,6 +109,5 @@ def delete_property_by_id(db: Session, prop_id: int) -> bool:
         db.commit()
     except IntegrityError as e:
         db.rollback()
-        # se houver restrições de FK sem CASCADE
-        raise ValueError("Cannot delete property due to related records.") from e
+        raise ValueError("debub par FK delete") from e
     return True
