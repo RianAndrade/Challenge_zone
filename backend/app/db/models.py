@@ -28,7 +28,12 @@ class Reservation(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
 
-    #property_id: Mapped[int] = mapped_column( ForeignKey(properties.id, ), nullable=False)
+    property_id: Mapped[int] = mapped_column(
+        ForeignKey("properties.id"),
+        nullable=False,
+        index=True
+    )
+
     client_name: Mapped[str] = mapped_column(String(255), nullable=False)
     client_email: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     start_date: Mapped[Date] = mapped_column(Date, nullable=False)

@@ -1,5 +1,7 @@
 from decimal import Decimal
-from pydantic import BaseModel, Field, constr, conint, condecimal
+from datetime import date
+from pydantic import BaseModel, Field, constr, conint, condecimal, EmailStr,field_validator
+
 
 # Validacao do Json
 
@@ -22,3 +24,29 @@ class PropertyOut(PropertyCreate):
 
     class Config:
         from_attributes = True  
+
+
+
+class ReservationCreate(BaseModel):
+    property_id: int = Field(..., description="ID da propriedade")
+    client_name: str = Field(..., min_length=1, max_length=255)
+    client_email: str = Field(..., min_length=1, max_length=255)
+    start_date: date
+    end_date: date
+    guests_quantity: conint(ge=1) 
+
+    # end_date > start_date
+
+    @field_validator("end_date")
+    @classmethod
+    def check_dates(cls, v: date, info):
+        start = info.data.get("start_date")
+        if start is not None and v <= start:
+            raise ValueError("end_date tem que ser maior que start_date")
+        return v
+
+class ReservationOut(ReservationCreate):
+    id: int
+
+    class Config:
+        from_attributes = True 
