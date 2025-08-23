@@ -39,7 +39,7 @@ def list_properties(
 
     return q.order_by(asc(Property.id)).all()
 
-def _find_conflicts(
+def find_conflicts(
     db: Session,
     property_id: int,
     start_date: date,
@@ -78,7 +78,7 @@ def check_availability(
             detail="Capacidade insuficiente para a quantidade de hóspedes solicitada",
         )
 
-    if _find_conflicts(db, property_id, start_date, end_date):
+    if find_conflicts(db, property_id, start_date, end_date):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Período indisponível para esta propriedade",

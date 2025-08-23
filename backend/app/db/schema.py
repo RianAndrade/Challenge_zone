@@ -50,3 +50,11 @@ class ReservationOut(ReservationCreate):
 
     class Config:
         from_attributes = True 
+
+
+class ReservationCreateResponse(BaseModel):
+    message: str
+    reservation: ReservationOut
+
+    class Config:
+        from_attributes = True
