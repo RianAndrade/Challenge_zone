@@ -28,9 +28,9 @@ Antes de começar, verifique se você atende aos seguintes requisitos:
 
 ### 🧰 Variáveis de ambiente
 
+Normalmente, não é considerado uma boa prática versionar ou expor o arquivo .env em repositórios, já que ele pode conter informações sensíveis como credenciais, chaves de API e configurações privadas.
 
-
-O formato das variáveis de ambiente encontra-se no arquivo `.env.copy` e também mais abaixo neste documento .
+No entanto, para fins exclusivamente práticos e de aprendizado, o arquivo .env já está incluído neste repositório. Isso facilita a execução imediata do projeto sem a necessidade de configurações adicionais, uma vez que não se trata de um projeto real em produção.
 
 | Variavel           | Descricao                                 |
 |--------------------|-------------------------------------------|
@@ -50,7 +50,7 @@ O formato das variáveis de ambiente encontra-se no arquivo `.env.copy` e també
 ```
 
 
-2. Crie um arquivo .env na raiz (mesma pasta que o docker-compose.yml) com base no exemplo:
+2. Verifique se arquivo .env esta presente na raiz do proejto ( mesma pasta que o docker-compose.yml ) caso não esteja crie um com base no exemplo:
 
 ```bash
     POSTGRES_DB=appdb
