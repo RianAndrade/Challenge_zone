@@ -20,14 +20,15 @@ def list_properties(
 
     q = db.query(Property)
 
-    if address_state: 
-        q = q.filter(func.lower(Property.address_state).like(f"%{address_state.lower()}%"))
-    
+    if address_state:
+        q = q.filter(Property.address_state == address_state.strip())
+
     if address_neighborhood:
-        q = q.filter(func.lower(Property.address_neighborhood).like(f"%{address_neighborhood.lower()}%"))
+        q = q.filter(Property.address_neighborhood == address_neighborhood.strip())
 
     if address_city:
-        q = q.filter(func.lower(Property.address_city).like(f"%{address_city.lower()}%"))
+        q = q.filter(Property.address_city == address_city.strip())
+
 
 #esta maior ou igual para facilitar debug mudar para enviar
 
