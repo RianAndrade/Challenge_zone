@@ -10,10 +10,12 @@ services:
       timeout: 5s
       retries: 20
     ports:
-      - "5432:5432"   # em produção, evite expor
+      - "5432:5432" 
 
   backend:
     build: ./backend
+    volumes:
+      - ./backend:/app   
     env_file: ./.env
     depends_on:
       db:
