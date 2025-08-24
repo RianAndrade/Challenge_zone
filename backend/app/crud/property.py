@@ -66,6 +66,12 @@ def check_availability(
     
     prop = db.get(Property, property_id)
     
+    if start_date == end_date:
+        raise HTTPException(  
+            status_code=status.HTTP_409_CONFLICT,
+            detail="A data de saída deve ser posterior à data de início (não podem ser iguais).",
+            )
+
     if prop is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
