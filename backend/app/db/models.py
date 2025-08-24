@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Float, Date, ForeignKey, Numeric
+from sqlalchemy import String, Integer, Float, Date, ForeignKey, Numeric, Boolean, sql 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
@@ -39,13 +39,8 @@ class Reservation(Base):
     start_date: Mapped[Date] = mapped_column(Date, nullable=False)
     end_date: Mapped[Date] = mapped_column(Date, nullable=False)
     guests_quantity: Mapped[int] = mapped_column(Integer, nullable=False)
-
-'''
-    verificar depois, esta dando algum erro semantico
-
-    __table_args__ = (
-        CheckConstraint("guests_quantity >= 0", name="ck_users"),
-        CheckConstraint("start_date <= end_date", name="ck_users_date_range"),
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False,
+        server_default=sql.true(),  
+        default=True,
     )
-
-'''

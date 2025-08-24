@@ -57,3 +57,16 @@ def list_reservations(
         q = q.filter(Reservation.property_id == property_id) 
     
     return q.order_by(asc(Reservation.id)).all()
+
+def deactivate_reservation(db: Session, reservation_id: int) -> Optional[Reservation]:
+    
+    reservation = db.get(Reservation, reservation_id)
+    if not reservation:
+        return None
+    if reservation.is_active is False:
+        return reservation
+
+    reservation.is_active = False
+    db.commit()
+    db.refresh(reservation)
+    return reservation

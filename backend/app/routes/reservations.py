@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional, List
 from app.db.session import get_db
 from app.db.schema import ReservationCreate, ReservationOut, ReservationCreateResponse
-from app.crud.reservation import create_reservation, list_reservations
+from app.crud.reservation import create_reservation, list_reservations, deactivate_reservation
 from app.crud.property import check_availability
 
 router = APIRouter(prefix="/reservations", tags=["reservations"])
@@ -33,3 +33,11 @@ def create_reservation_endpoint(
         return create_reservation(db, payload)
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e))
+
+
+@router.put("/{reservation_id}/deactivate", response_model=ReservationOut)
+def deactivate_reservation_endpoint(reservation_id: int, db: Session = Depends(get_db)):
+    res = deactivate_reservation(db, reservation_id)
+    if not res:
+        raise HTTPException(status_code=404, detail="Reservation not found")
+    return res

@@ -1,10 +1,7 @@
 from decimal import Decimal
 from datetime import date
-from pydantic import BaseModel, Field, constr, conint, condecimal, EmailStr,field_validator
-
-
-# Validacao do Json
-
+from pydantic import BaseModel, Field, constr, conint, condecimal, EmailStr, field_validator
+from pydantic import ConfigDict 
 
 class PropertyCreate(BaseModel):
     title: constr(strip_whitespace=True, min_length=1, max_length=160)
@@ -18,43 +15,33 @@ class PropertyCreate(BaseModel):
     capacity: conint(ge=0)
     price_per_night: condecimal(max_digits=10, decimal_places=2, ge=Decimal("0"))
 
-# Saída
 class PropertyOut(PropertyCreate):
+    model_config = ConfigDict(from_attributes=True) 
     id: int
-
-    class Config:
-        from_attributes = True  
-
 
 
 class ReservationCreate(BaseModel):
+    model_config = ConfigDict(extra='forbid') 
     property_id: int = Field(..., description="ID da propriedade")
     client_name: str = Field(..., min_length=1, max_length=255)
     client_email: str = Field(..., min_length=1, max_length=255)
     start_date: date
     end_date: date
-    guests_quantity: conint(ge=0) 
+    guests_quantity: conint(ge=0)
 
-    # end_date > start_date
 
-    @field_validator("end_date")
-    @classmethod
-    def check_dates(cls, v: date, info):
-        start = info.data.get("start_date")
-        if start is not None and v <= start:
-            raise ValueError("end_date tem que ser maior que start_date")
-        return v
-
-class ReservationOut(ReservationCreate):
+class ReservationOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True, extra='forbid')
     id: int
-
-    class Config:
-        from_attributes = True 
-
+    property_id: int
+    client_name: str
+    client_email: str
+    start_date: date
+    end_date: date
+    guests_quantity: int
+    is_active: bool  # aparece só na resposta
 
 class ReservationCreateResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True, extra='forbid')
     message: str
     reservation: ReservationOut
-
-    class Config:
-        from_attributes = True

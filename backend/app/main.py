@@ -2,10 +2,12 @@
 from fastapi import FastAPI
 from app.routes.properties import router as properties_router
 from app.routes.reservations import router as reservations_router
+from app.routes.seed import router as seed_router
 
 app = FastAPI(title="Challenge Zone")
 app.include_router(properties_router)
 app.include_router(reservations_router) 
+app.include_router(seed_router)
 
 @app.get("/")
 def read_root():
