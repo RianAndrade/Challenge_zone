@@ -12,6 +12,7 @@ from app.db.models import Property, Reservation  # ajuste se seu path for difere
 
 # ---------- DADOS DO SEED ----------
 
+
 def seed_properties_data() -> List[dict]:
     """Retorna exatamente 5 propriedades do seed."""
     return [
@@ -105,7 +106,6 @@ def seed_reservations_data() -> List[dict]:
             "end_date": date(2025, 8, 12),
             "guests_quantity": 2,
         },
-
         # 2 reservas - Refúgio das Palmeiras
         {
             "property_title": "Refúgio das Palmeiras",
@@ -123,7 +123,6 @@ def seed_reservations_data() -> List[dict]:
             "end_date": date(2025, 10, 3),
             "guests_quantity": 2,
         },
-
         # 1 reserva - Pouso do Cedro
         {
             "property_title": "Pouso do Cedro",
@@ -138,13 +137,16 @@ def seed_reservations_data() -> List[dict]:
 
 # ---------- CHECAGENS / REGRAS ----------
 
+
 def _any_seed_property_exists(db: Session, titles: List[str]) -> List[str]:
     """Retorna títulos já existentes dentre os títulos do seed."""
     rows = db.query(Property).filter(Property.title.in_(titles)).all()
     return [r.title for r in rows]
 
 
-def _any_seed_reservation_exists(db: Session, res_data: List[dict]) -> List[Tuple[str, str, date, date]]:
+def _any_seed_reservation_exists(
+    db: Session, res_data: List[dict]
+) -> List[Tuple[str, str, date, date]]:
     """
     Checa se alguma reserva do seed já existe.
     Considera um 'match' por (property_id, client_email, start_date, end_date).
@@ -163,16 +165,22 @@ def _any_seed_reservation_exists(db: Session, res_data: List[dict]) -> List[Tupl
             # se a property ainda não existe, essa reserva ainda não pode existir (ok)
             continue
 
-        found = db.query(Reservation).filter(
-            and_(
-                Reservation.property_id == p.id,
-                Reservation.client_email == r["client_email"],
-                Reservation.start_date == r["start_date"],
-                Reservation.end_date == r["end_date"],
+        found = (
+            db.query(Reservation)
+            .filter(
+                and_(
+                    Reservation.property_id == p.id,
+                    Reservation.client_email == r["client_email"],
+                    Reservation.start_date == r["start_date"],
+                    Reservation.end_date == r["end_date"],
+                )
             )
-        ).first()
+            .first()
+        )
         if found:
-            duplicates.append((r["property_title"], r["client_email"], r["start_date"], r["end_date"]))
+            duplicates.append(
+                (r["property_title"], r["client_email"], r["start_date"], r["end_date"])
+            )
 
     return duplicates
 
@@ -203,6 +211,7 @@ def _assert_seed_not_applied(db: Session):
 
 # ---------- CRIAÇÃO ----------
 
+
 def seed_5_properties(db: Session) -> Dict[str, Property]:
     """Cria exatamente 5 propriedades e retorna dict title -> Property."""
     created_map: Dict[str, Property] = {}
@@ -214,14 +223,19 @@ def seed_5_properties(db: Session) -> Dict[str, Property]:
     return created_map
 
 
-def seed_5_reservations(db: Session, props_by_title: Dict[str, Property]) -> List[Reservation]:
+def seed_5_reservations(
+    db: Session, props_by_title: Dict[str, Property]
+) -> List[Reservation]:
     """Cria exatamente 5 reservas na distribuição definida em seed_reservations_data()."""
     created: List[Reservation] = []
     for r in seed_reservations_data():
         p = props_by_title.get(r["property_title"])
         if not p:
             # Como o orquestrador sempre cria as 5 props antes, isso não deve ocorrer.
-            raise HTTPException(status_code=500, detail=f"Property '{r['property_title']}' não foi criada.")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Property '{r['property_title']}' não foi criada.",
+            )
         obj = Reservation(
             property_id=p.id,
             client_name=r["client_name"],
@@ -237,6 +251,7 @@ def seed_5_reservations(db: Session, props_by_title: Dict[str, Property]) -> Lis
 
 
 # ---------- ORQUESTRADOR ----------
+
 
 def apply_full_seed(db: Session) -> dict:
     """

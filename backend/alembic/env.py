@@ -5,13 +5,13 @@ from sqlalchemy import engine_from_config, pool
 import sys
 import pathlib
 
-# Para conseguir chegar a app 
+# Para conseguir chegar a app
 BASE_DIR = pathlib.Path(__file__).resolve().parents[1]
 if str(BASE_DIR) not in sys.path:
     sys.path.append(str(BASE_DIR))
 
 from app.db.base import Base
-import app.db.models 
+import app.db.models
 
 config = context.config
 

@@ -15,7 +15,7 @@ def list_properties(
     address_neighborhood: Optional[str] = None,
     address_city: Optional[str] = None,
     address_state: Optional[str] = None,
-    price_per_night: Optional[int] = None 
+    price_per_night: Optional[int] = None,
 ) -> List[Property]:
 
     q = db.query(Property)
@@ -29,8 +29,7 @@ def list_properties(
     if address_city:
         q = q.filter(Property.address_city == address_city.strip())
 
-
-#esta maior ou igual para facilitar debug mudar para enviar
+    # esta maior ou igual para facilitar debug mudar para enviar
 
     if capacity:
         q = q.filter(Property.capacity >= capacity)
@@ -40,6 +39,7 @@ def list_properties(
 
     return q.order_by(asc(Property.id)).all()
 
+
 def find_conflicts(
     db: Session,
     property_id: int,
@@ -47,15 +47,13 @@ def find_conflicts(
     end_date: date,
 ) -> List[int]:
 
-    stmt = (
-        select(Reservation.id)
-        .where(
-            Reservation.property_id == property_id,
-            Reservation.start_date <= end_date,
-            Reservation.end_date >= start_date,
-        )
+    stmt = select(Reservation.id).where(
+        Reservation.property_id == property_id,
+        Reservation.start_date <= end_date,
+        Reservation.end_date >= start_date,
     )
     return [row[0] for row in db.execute(stmt).all()]
+
 
 def check_availability(
     db: Session,
@@ -64,14 +62,14 @@ def check_availability(
     end_date: date,
     guests_quantity: int,
 ) -> List[Property]:
-    
+
     prop = db.get(Property, property_id)
-    
+
     if start_date == end_date:
-        raise HTTPException(  
+        raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="A data de saída deve ser posterior à data de início (não podem ser iguais).",
-            )
+        )
 
     if prop is None:
         raise HTTPException(
@@ -90,9 +88,8 @@ def check_availability(
             status_code=status.HTTP_409_CONFLICT,
             detail="Período indisponível para esta propriedade",
         )
-    
-    return [prop]
 
+    return [prop]
 
 
 def create_property(db: Session, data: PropertyCreate) -> Property:

@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Float, Date, ForeignKey, Numeric, Boolean, sql 
+from sqlalchemy import String, Integer, Float, Date, ForeignKey, Numeric, Boolean, sql
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
@@ -22,16 +22,13 @@ class Property(Base):
     price_per_night: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
 
 
-
 class Reservation(Base):
     __tablename__ = "reservations"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
 
     property_id: Mapped[int] = mapped_column(
-        ForeignKey("properties.id"),
-        nullable=False,
-        index=True
+        ForeignKey("properties.id"), nullable=False, index=True
     )
 
     client_name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -40,7 +37,8 @@ class Reservation(Base):
     end_date: Mapped[Date] = mapped_column(Date, nullable=False)
     guests_quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     is_active: Mapped[bool] = mapped_column(
-        Boolean, nullable=False,
-        server_default=sql.true(),  
+        Boolean,
+        nullable=False,
+        server_default=sql.true(),
         default=True,
     )

@@ -1,7 +1,16 @@
 from decimal import Decimal
 from datetime import date
-from pydantic import BaseModel, Field, constr, conint, condecimal, EmailStr, field_validator
-from pydantic import ConfigDict 
+from pydantic import (
+    BaseModel,
+    Field,
+    constr,
+    conint,
+    condecimal,
+    EmailStr,
+    field_validator,
+)
+from pydantic import ConfigDict
+
 
 class PropertyCreate(BaseModel):
     title: constr(strip_whitespace=True, min_length=1, max_length=160)
@@ -15,13 +24,14 @@ class PropertyCreate(BaseModel):
     capacity: conint(ge=0)
     price_per_night: condecimal(max_digits=10, decimal_places=2, ge=Decimal("0"))
 
+
 class PropertyOut(PropertyCreate):
-    model_config = ConfigDict(from_attributes=True) 
+    model_config = ConfigDict(from_attributes=True)
     id: int
 
 
 class ReservationCreate(BaseModel):
-    model_config = ConfigDict(extra='forbid') 
+    model_config = ConfigDict(extra="forbid")
     property_id: int = Field(..., description="ID da propriedade")
     client_name: str = Field(..., min_length=1, max_length=255)
     client_email: str = Field(..., min_length=1, max_length=255)
@@ -31,7 +41,7 @@ class ReservationCreate(BaseModel):
 
 
 class ReservationOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True, extra='forbid')
+    model_config = ConfigDict(from_attributes=True, extra="forbid")
     id: int
     property_id: int
     client_name: str
@@ -41,7 +51,8 @@ class ReservationOut(BaseModel):
     guests_quantity: int
     is_active: bool  # aparece só na resposta
 
+
 class ReservationCreateResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True, extra='forbid')
+    model_config = ConfigDict(from_attributes=True, extra="forbid")
     message: str
     reservation: ReservationOut

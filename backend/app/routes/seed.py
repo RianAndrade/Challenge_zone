@@ -6,6 +6,7 @@ from app.crud.seeds import apply_full_seed
 
 router = APIRouter(prefix="/seed", tags=["seed"])
 
+
 @router.post("", status_code=status.HTTP_201_CREATED)
 def run_seed(db: Session = Depends(get_db)):
     try:
