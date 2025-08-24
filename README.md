@@ -16,11 +16,30 @@ Ele permite cadastrar imóveis (com endereço, capacidade, preço por noite), co
 
 ---
 
-## 📦 Dependências
+## 💻 Pré-requisitos
 
-O único pré-requisito é possuir **Docker** e **Docker Compose** instalados.
+Antes de começar, verifique se você atende aos seguintes requisitos:
+
+- 🐋 Docker
+
+- 🚪 Portas: 8000 (api), 5432 (postgres).
 
 ---
+
+### 🧰 Variáveis de ambiente
+
+
+
+O formato das variáveis de ambiente encontra-se no arquivo `.env.copy` e também mais abaixo neste documento .
+
+| Variavel           | Descricao                                 |
+|--------------------|-------------------------------------------|
+| `POSTGRES_DB`      | Nome do banco de dados utilizado pela app |
+| `POSTGRES_USER`    | Usuario do banco de dados                 |
+| `POSTGRES_PASSWORD`| Senha do usuario do banco                 |
+| `DB_HOST`          | Host onde o banco esta rodando (servico)  |
+| `DB_PORT`          | Porta do banco de dados PostgreSQL        |
+
 
 ## 🔧 Como rodar o projeto
 
@@ -59,17 +78,17 @@ As portas Utilizadas são:
     docker compose up --build
 ```
 
+---
+
 ## 👉 Como acessar o projeto
 
-A API estará disponível em:
+Depois de que todos os containers subirem a API estará disponível em:
 
-```bash
-    http://localhost:8000
-```
+[http://localhost:8000](http://localhost:8000)
+
 
 A documentação interativa (Swagger UI) pode ser acessada em:
 
-```bash
-    http://localhost:8000/docs
-```
+[http://localhost:8000/docs](http://localhost:8000/docs)
+
 
