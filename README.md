@@ -99,6 +99,8 @@ Essa rota não é uma boa prática em aplicações reais em produção, mas foi 
 O projeto conta com testes automatizados para garantir o correto funcionamento das propriedades e reservas.
 Os testes validam desde regras de negócio (ex.: cálculo de preço, datas válidas) até a resposta dos endpoints da API.
 
+Para isolar o ambiente de produção e evitar interferências no banco de dados real, os testes utilizam uma instância separada do SQLite em memória. Essa abordagem permite simular o comportamento da aplicação em um banco dedicado apenas para validação, garantindo maior rapidez na execução e segurança ao validar cenários críticos sem afetar os dados utilizados em desenvolvimento ou produção.
+
 1. Como rodar os testes
 
 Com os containers já rodando, em um terminal, já dentro da pasta do projeto, execute: :
