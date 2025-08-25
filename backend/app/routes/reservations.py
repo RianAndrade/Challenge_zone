@@ -43,7 +43,7 @@ def create_reservation_endpoint(
         raise HTTPException(status_code=409, detail=str(e))
 
 
-@router.put("/{reservation_id}/deactivate", response_model=ReservationOut)
+@router.put("/{reservation_id}/cancel", response_model=ReservationOut)
 def deactivate_reservation_endpoint(reservation_id: int, db: Session = Depends(get_db)):
     res = deactivate_reservation(db, reservation_id)
     if not res:

@@ -30,6 +30,10 @@ class PropertyOut(PropertyCreate):
     id: int
 
 
+class PropertyMessageResponse(BaseModel):
+    message: str = Field(..., description="Mensagem de disponibilidade")
+
+
 class ReservationCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
     property_id: int = Field(..., description="ID da propriedade")
@@ -44,12 +48,14 @@ class ReservationOut(BaseModel):
     model_config = ConfigDict(from_attributes=True, extra="forbid")
     id: int
     property_id: int
+    total_price: float
     client_name: str
     client_email: str
     start_date: date
     end_date: date
     guests_quantity: int
-    is_active: bool  # aparece só na resposta
+    is_active: bool 
+
 
 
 class ReservationCreateResponse(BaseModel):

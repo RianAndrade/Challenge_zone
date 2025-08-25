@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, HTTPException, Query
 from typing import Optional, List
 from datetime import date
 from sqlalchemy.orm import Session
-from app.db.schema import PropertyCreate, PropertyOut
+from app.db.schema import PropertyCreate, PropertyOut,PropertyMessageResponse
 from app.crud.property import (
     create_property,
     list_properties,
@@ -35,7 +35,7 @@ def list_properties_endpoint(
     )
 
 
-@router.get("/availability", response_model=List[PropertyOut])
+@router.get("/availability", response_model=PropertyMessageResponse)
 def check_availability_endpoint(
     property_id: int = Query(None, description="Id da propriedade"),
     start_date: date = Query(
@@ -52,8 +52,11 @@ def check_availability_endpoint(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Todos os dados devem estar preenchidos",
         )
+        
+    check_availability(db, property_id, start_date, end_date, guests_quantity)
+    
+    return {"message": "A propriedade encontra-se disponível para as datas verificadas."}
 
-    return check_availability(db, property_id, start_date, end_date, guests_quantity)
 
 
 @router.post("", response_model=PropertyOut, status_code=status.HTTP_201_CREATED)

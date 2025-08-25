@@ -33,12 +33,18 @@ class Reservation(Base):
 
     client_name: Mapped[str] = mapped_column(String(255), nullable=False)
     client_email: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    
     start_date: Mapped[Date] = mapped_column(Date, nullable=False)
     end_date: Mapped[Date] = mapped_column(Date, nullable=False)
+    
     guests_quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+    
+    total_price: Mapped[float] = mapped_column(Numeric(10, 2), nullable=True, default=0.00)
+    
     is_active: Mapped[bool] = mapped_column(
         Boolean,
         nullable=False,
         server_default=sql.true(),
         default=True,
     )
+    

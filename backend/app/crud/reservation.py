@@ -5,6 +5,7 @@ from sqlalchemy import asc, func, select
 from app.db.models import Reservation, Property
 from app.db.schema import ReservationCreate
 from datetime import date
+from decimal import Decimal, ROUND_HALF_UP
 
 
 def _get_property_price(db: Session, property_id: int) -> int:
@@ -24,20 +25,23 @@ def calculate_days_reserved(start_date: date, end_date: date) -> int:
 
 
 def create_reservation(db: Session, data: ReservationCreate) -> Reservation:
-    obj = Reservation(**data.model_dump())
-    db.add(obj)
-    price = _get_property_price(db, data.property_id)
+    price = _get_property_price(db, data.property_id) 
     days = calculate_days_reserved(data.start_date, data.end_date)
+
+    total = (Decimal(days) * Decimal(price)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+    obj = Reservation(**data.model_dump(exclude={"total_price"}), total_price=total)
+    db.add(obj)
+
     try:
         db.commit()
+        db.refresh(obj)
     except IntegrityError as e:
         db.rollback()
         raise ValueError(
             "Não foi possível criar a reserva. Verifique os dados fornecidos."
         ) from e
-    db.refresh(obj)
 
-    total = days * price
     message = f"Reserva Feita com Sucesso, o valor total será R${total:.2f}"
     return {
         "message": message,

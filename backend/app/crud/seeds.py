@@ -1,16 +1,12 @@
-# app/services/seed_service.py
 from datetime import date
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from typing import Dict, List, Tuple
 
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
-from app.db.models import Property, Reservation  # ajuste se seu path for diferente
-
-
-# ---------- DADOS DO SEED ----------
+from app.db.models import Property, Reservation 
 
 
 def seed_properties_data() -> List[dict]:
@@ -135,8 +131,20 @@ def seed_reservations_data() -> List[dict]:
     ]
 
 
-# ---------- CHECAGENS / REGRAS ----------
+# ---------- REGRA DE CÁLCULO ----------
 
+def compute_total_price(price_per_night: Decimal, start_date: date, end_date: date) -> Decimal:
+    """
+    Calcula o total com base em (dias * price_per_night), arredondando para 2 casas.
+    Garante pelo menos 1 dia.
+    """
+    days = (end_date - start_date).days
+    if days <= 0:
+        days = 1
+    return (price_per_night * Decimal(days)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+
+# ---------- CHECAGENS / REGRAS ----------
 
 def _any_seed_property_exists(db: Session, titles: List[str]) -> List[str]:
     """Retorna títulos já existentes dentre os títulos do seed."""
@@ -150,11 +158,11 @@ def _any_seed_reservation_exists(
     """
     Checa se alguma reserva do seed já existe.
     Considera um 'match' por (property_id, client_email, start_date, end_date).
-    Retorna uma lista de tuplas (property_title, client_email, start_date, end_date) já existentes.
+    Retorna lista de tuplas (property_title, client_email, start_date, end_date) já existentes.
     """
     duplicates = []
 
-    # Precisamos mapear titles -> ids existentes no banco
+    # Mapear titles -> ids existentes no banco
     titles = sorted({r["property_title"] for r in res_data})
     props = db.query(Property).filter(Property.title.in_(titles)).all()
     prop_by_title = {p.title: p for p in props}
@@ -211,7 +219,6 @@ def _assert_seed_not_applied(db: Session):
 
 # ---------- CRIAÇÃO ----------
 
-
 def seed_5_properties(db: Session) -> Dict[str, Property]:
     """Cria exatamente 5 propriedades e retorna dict title -> Property."""
     created_map: Dict[str, Property] = {}
@@ -226,7 +233,9 @@ def seed_5_properties(db: Session) -> Dict[str, Property]:
 def seed_5_reservations(
     db: Session, props_by_title: Dict[str, Property]
 ) -> List[Reservation]:
-    """Cria exatamente 5 reservas na distribuição definida em seed_reservations_data()."""
+    """
+    Cria exatamente 5 reservas e JÁ PREENCHE total_price usando price_per_night da Property.
+    """
     created: List[Reservation] = []
     for r in seed_reservations_data():
         p = props_by_title.get(r["property_title"])
@@ -236,6 +245,9 @@ def seed_5_reservations(
                 status_code=500,
                 detail=f"Property '{r['property_title']}' não foi criada.",
             )
+
+        total = compute_total_price(p.price_per_night, r["start_date"], r["end_date"])
+
         obj = Reservation(
             property_id=p.id,
             client_name=r["client_name"],
@@ -243,6 +255,7 @@ def seed_5_reservations(
             start_date=r["start_date"],
             end_date=r["end_date"],
             guests_quantity=r["guests_quantity"],
+            total_price=total,  # <— já sobe calculado
         )
         db.add(obj)
         db.flush()
@@ -252,13 +265,12 @@ def seed_5_reservations(
 
 # ---------- ORQUESTRADOR ----------
 
-
 def apply_full_seed(db: Session) -> dict:
     """
     Orquestra o seed:
       1) Falha com 409 se já existe qualquer dado do seed
       2) Cria 5 propriedades
-      3) Cria 5 reservas (2 na A, 2 na B, 1 na C; D e E sem reservas)
+      3) Cria 5 reservas (2 na A, 2 na B, 1 na C; D e E sem reservas), com total_price calculado
       4) Commita e retorna resumo
     """
     _assert_seed_not_applied(db)
