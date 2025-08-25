@@ -3,7 +3,7 @@ from typing import Optional, List
 from datetime import date
 from sqlalchemy.orm import Session
 from app.db.schema import PropertyCreate, PropertyOut,PropertyMessageResponse
-from app.crud.property import (
+from app.service.property import (
     create_property,
     list_properties,
     delete_property_by_id,

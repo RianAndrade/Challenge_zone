@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.crud.seeds import apply_full_seed
+from app.service.seeds import apply_full_seed
 
 router = APIRouter(prefix="/seed", tags=["seed"])
 

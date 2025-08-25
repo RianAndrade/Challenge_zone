@@ -3,12 +3,12 @@ from sqlalchemy.orm import Session
 from typing import Optional, List
 from app.db.session import get_db
 from app.db.schema import ReservationCreate, ReservationOut, ReservationCreateResponse
-from app.crud.reservation import (
+from app.service.reservation import (
     create_reservation,
     list_reservations,
     deactivate_reservation,
 )
-from app.crud.property import check_availability
+from app.service.property import check_availability
 
 router = APIRouter(prefix="/reservations", tags=["reservations"])
 
