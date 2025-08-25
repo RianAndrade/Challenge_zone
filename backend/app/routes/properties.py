@@ -16,7 +16,7 @@ router = APIRouter(prefix="/properties", tags=["properties"])
 
 @router.get("/list", response_model=List[PropertyOut])
 def list_properties_endpoint(
-    address_neighborhood: Optional[str] = Query(None, description="Filtro por Estado"),
+    address_neighborhood: Optional[str] = Query(None, description="Filtro por Bairro"),
     address_city: Optional[str] = Query(None, description="Filtro por cidade"),
     address_state: Optional[str] = Query(None, description="Filtro por estado"),
     capacity: Optional[int] = Query(
