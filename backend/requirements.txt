@@ -5,3 +5,10 @@ psycopg[binary]
 python-dotenv
 alembic
 psycopg2-binary
+
+pytest
+pytest-cov
+faker
+factory_boy
+httpx>=0.27 
+psycopg[binary]

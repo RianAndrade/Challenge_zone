@@ -13,6 +13,8 @@ Ele permite cadastrar imóveis (com endereço, capacidade, preço por noite), co
 - [SQLAlchemy](https://www.sqlalchemy.org/) — ORM
 - [Alembic](https://alembic.sqlalchemy.org/) — controle de migrações
 - [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/) — containerização e orquestração
+- [pytest](https://pytest.org/) — framework de testes
+- [HTTPX](https://www.python-httpx.org/) — cliente HTTP (sync/async) para testes e integrações
 
 ---
 
@@ -60,19 +62,8 @@ No entanto, para fins exclusivamente práticos e de aprendizado, o arquivo .env 
     DB_PORT=5432
 ```
 
-3. Certifique-se de que essas portas estejam livres antes de rodar os containers.
 
-As portas Utilizadas são:
-
-
-| Porta | Serviço         |
-|-------|-----------------|
-| 8000  | Backend FastAPI |
-| 5432  | PostgreSQL      |
-
-
-
-4. Suba os containers:
+3. Suba os containers:
 
 ```bash
     docker compose up --build
