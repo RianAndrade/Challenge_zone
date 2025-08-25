@@ -90,9 +90,9 @@ Essa rota não é uma boa prática em aplicações reais em produção, mas foi 
 
 *📌 O que a rota faz?*
 
-Insere no banco de dados alguns imóveis de exemplo já com endereço, capacidade e preço por noite.
+1. Insere no banco de dados alguns imóveis de exemplo já com endereço, capacidade e preço por noite.
+2. Cria algumas reservas iniciais associadas a esses imóveis, já calculando automaticamente o total_price com base no preço da propriedade e no número de dias.
 
-Cria algumas reservas iniciais associadas a esses imóveis, já calculando automaticamente o total_price com base no preço da propriedade e no número de dias.
 ---
 ## 🧪 Testes
 
