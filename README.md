@@ -16,11 +16,30 @@ Ele permite cadastrar imóveis (com endereço, capacidade, preço por noite), co
 
 ---
 
-## 📦 Dependências
+## 💻 Pré-requisitos
 
-O único pré-requisito é possuir **Docker** e **Docker Compose** instalados.
+Antes de começar, verifique se você atende aos seguintes requisitos:
+
+- 🐋 Docker
+
+- 🚪 Portas: 8000 (api), 5432 (postgres).
 
 ---
+
+### 🧰 Variáveis de ambiente
+
+Normalmente, não é considerado uma boa prática versionar ou expor o arquivo .env em repositórios, já que ele pode conter informações sensíveis como credenciais, chaves de API e configurações privadas.
+
+No entanto, para fins exclusivamente práticos e de aprendizado, o arquivo .env já está incluído neste repositório. Isso facilita a execução imediata do projeto sem a necessidade de configurações adicionais, uma vez que não se trata de um projeto real em produção.
+
+| Variavel           | Descricao                                 |
+|--------------------|-------------------------------------------|
+| `POSTGRES_DB`      | Nome do banco de dados utilizado pela app |
+| `POSTGRES_USER`    | Usuario do banco de dados                 |
+| `POSTGRES_PASSWORD`| Senha do usuario do banco                 |
+| `DB_HOST`          | Host onde o banco esta rodando (servico)  |
+| `DB_PORT`          | Porta do banco de dados PostgreSQL        |
+
 
 ## 🔧 Como rodar o projeto
 
@@ -31,7 +50,7 @@ O único pré-requisito é possuir **Docker** e **Docker Compose** instalados.
 ```
 
 
-2. Crie um arquivo .env na raiz (mesma pasta que o docker-compose.yml) com base no exemplo:
+2. Verifique se arquivo .env esta presente na raiz do proejto ( mesma pasta que o docker-compose.yml ) caso não esteja crie um com base no exemplo:
 
 ```bash
     POSTGRES_DB=appdb
@@ -59,17 +78,17 @@ As portas Utilizadas são:
     docker compose up --build
 ```
 
+---
+
 ## 👉 Como acessar o projeto
 
-A API estará disponível em:
+Depois de que todos os containers subirem a API estará disponível em:
 
-```bash
-    http://localhost:8000
-```
+[http://localhost:8000](http://localhost:8000)
+
 
 A documentação interativa (Swagger UI) pode ser acessada em:
 
-```bash
-    http://localhost:8000/docs
-```
+[http://localhost:8000/docs](http://localhost:8000/docs)
+
 
