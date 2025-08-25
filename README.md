@@ -82,4 +82,27 @@ A documentação interativa (Swagger UI) pode ser acessada em:
 
 [http://localhost:8000/docs](http://localhost:8000/docs)
 
+---
+## 🌱 Rota de Seeds
 
+Foi criada a rota /seeds com o objetivo exclusivo de popular a API e facilitar testes manuais durante o desenvolvimento.
+Essa rota não é uma boa prática em aplicações reais em produção, mas foi adicionada neste projeto apenas para fins didáticos e de praticidade.
+
+*📌 O que a rota faz?*
+
+Insere no banco de dados alguns imóveis de exemplo já com endereço, capacidade e preço por noite.
+
+Cria algumas reservas iniciais associadas a esses imóveis, já calculando automaticamente o total_price com base no preço da propriedade e no número de dias.
+---
+## 🧪 Testes
+
+O projeto conta com testes automatizados para garantir o correto funcionamento das propriedades e reservas.
+Os testes validam desde regras de negócio (ex.: cálculo de preço, datas válidas) até a resposta dos endpoints da API.
+
+1. Como rodar os testes
+
+Com os containers já rodando, em um terminal, já dentro da pasta do projeto, execute: :
+
+```bash
+    docker compose exec backend pytest -q
+```
