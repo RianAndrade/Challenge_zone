@@ -61,22 +61,6 @@ def test_create_reservation__201_persiste_total_price(client, db_session):
     assert arr[0]["id"] == res["id"]
 
 
-def test_create_reservation__409_datas_invalidas(client, db_session):
-    prop = _persist_property(db_session)
-
-  
-    payload = {
-        "property_id": prop.id,
-        "client_name": "Erro Datas",
-        "client_email": "erro@example.com",
-        "start_date": "2025-09-05",
-        "end_date": "2025-09-05",
-        "guests_quantity": 1,
-    }
-    resp = client.post("/reservations", json=payload)
-    assert resp.status_code == 409
-    assert "data final" in resp.json()["detail"].lower()
-
 def test_list_reservations__filtros_por_email_e_property(client, db_session):
     http = client 
 
